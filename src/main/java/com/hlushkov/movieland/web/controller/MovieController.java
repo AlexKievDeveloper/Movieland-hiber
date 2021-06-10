@@ -1,4 +1,4 @@
-package com.hlushkov.movieland.web;
+package com.hlushkov.movieland.web.controller;
 
 import com.hlushkov.movieland.entity.Movie;
 import com.hlushkov.movieland.service.MovieService;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/movie")
+//@RequestMapping("/api/v1/movie")
 @RestController
 public class MovieController {
     private final MovieService movieService;

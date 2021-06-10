@@ -3,35 +3,64 @@ package com.hlushkov.movieland.dao.impl;
 import com.hlushkov.movieland.dao.MovieDao;
 import com.hlushkov.movieland.entity.Movie;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
-@RequiredArgsConstructor
+@Slf4j
+//@Repository
 public class HibernateMovieDao implements MovieDao {
-    private final SessionFactory sessionFactory;
+    //private final SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private EntityManagerFactory emf;
+
+    @PersistenceUnit
+    public void setEntityManagerFactory(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
+
 
     @Override
-    public List<Movie> finaAll() {
+    public List<Movie> findAll() {
+/*        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ConfigurationEntry> cq = cb.createQuery(ConfigurationEntry.class);
+        Root<ConfigurationEntry> rootEntry = cq.from(ConfigurationEntry.class);
+        CriteriaQuery<ConfigurationEntry> all = cq.select(rootEntry);
+        TypedQuery<ConfigurationEntry> allQuery = em.createQuery(all);
+        return allQuery.getResultList();*/
 
-        try (Session session = sessionFactory.openSession()) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Movie> criteriaQuery = cb.createQuery(Movie.class);
+
+        CriteriaBuilder criteriaBuilder = emf.createEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Movie> criteriaQuery = criteriaBuilder.createQuery(Movie.class);
+        Root<Movie> root = criteriaQuery.from(Movie.class);
+        CriteriaQuery<Movie> all = criteriaQuery.select(root);
+        TypedQuery<Movie> allQuery = entityManager.createQuery(all);
+        List<Movie> movies = allQuery.getResultList();
+        for (Movie movie : movies) {
+            log.info("Movie: {}", movie);
+        }
+        return movies;
+    }
+
+}
+
+
+
+/*        try (Session session = sessionFactory.openSession()) {
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(Movie.class);
         Root<Movie> rootEntry = criteriaQuery.from(Movie.class);
-        CriteriaQuery<Movie> all = criteriaQuery.select(rootEntry);
+        CriteriaQuery all = criteriaQuery.select(rootEntry);
 
         TypedQuery<Movie> allQuery = session.createQuery(all);
         return allQuery.getResultList();
-        }
-        //return List.of();
-    }
-}
-
+        }*/
 
 /*        try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
