@@ -21,16 +21,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DBUnit(caseInsensitiveStrategy = Orthography.LOWERCASE)
 @TestWebContextConfiguration
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class HibernateMovieDaoTest {
+class MovieRepositoryTest {
     @Autowired
-    private HibernateMovieDao hibernateMovieDao;
+    private MovieRepository movieRepository;
 
     @Test
     @DataSet(provider = TestData.MovieProvider.class, cleanAfter = true)
     @DisplayName("Returns list with all movies from DB")
     void findAll() {
         //when
-        List<Movie> actualMovies = hibernateMovieDao.findAll();
+        List<Movie> actualMovies = movieRepository.findAll();
 
         //then
         assertNotNull(actualMovies);

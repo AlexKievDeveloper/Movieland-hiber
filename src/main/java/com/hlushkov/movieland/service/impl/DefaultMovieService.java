@@ -1,6 +1,6 @@
 package com.hlushkov.movieland.service.impl;
 
-import com.hlushkov.movieland.dao.jpa.HibernateMovieDao;
+import com.hlushkov.movieland.dao.jpa.MovieRepository;
 import com.hlushkov.movieland.entity.Movie;
 import com.hlushkov.movieland.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +11,10 @@ import java.util.List;
 @Service
 public class DefaultMovieService implements MovieService {
     @Autowired
-    private HibernateMovieDao hibernateMovieDao;
+    private MovieRepository movieRepository;
 
     @Override
     public List<Movie> findAll() {
-        return hibernateMovieDao.findAll();
+        return movieRepository.findAll();
     }
 }

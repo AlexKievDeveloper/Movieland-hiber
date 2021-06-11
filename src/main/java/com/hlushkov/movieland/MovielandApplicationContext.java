@@ -3,13 +3,10 @@ package com.hlushkov.movieland;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -32,7 +29,7 @@ public class MovielandApplicationContext {
 
     @Bean
     public DataSource dataSource() {
-        HikariConfig hikariConfig = new HikariConfig();
+        final HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(url);
         hikariConfig.setUsername(userName);
         hikariConfig.setPassword(password);
@@ -42,14 +39,7 @@ public class MovielandApplicationContext {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean() {
-
-        final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setDataSource(dataSource());
-        factoryBean.setPackagesToScan("com.hlushkov.movieland.entity");
-        factoryBean.setPersistenceProvider(new HibernatePersistenceProvider());
-        factoryBean.setPersistenceUnitName("dbRiderEntityFactoryBean");
-
+    public SessionFactory sessionFactory() {
         final Properties properties = new Properties();
         properties.setProperty("hibernate.connection.driver_class", driverClassName);
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect");
@@ -58,14 +48,11 @@ public class MovielandApplicationContext {
         properties.setProperty("hibernate.connection.password", password);
         properties.setProperty("hibernate.connection.url", url);
         properties.setProperty("hibernate.connection.pool_size", String.valueOf(maximumPoolSize));
-        factoryBean.setJpaProperties(properties);
-        log.info("ENTITY MANAGER FACTORY BEAN CREATED BY TestConfiguration!");
-        return factoryBean;
-    }
 
-/*    @Bean
-    public EntityManager entityManager(EntityManagerFactory entityManagerFactory) {
-        return entityManagerFactory.createEntityManager();
-    }*/
+        org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
+        configuration.addAnnotatedClass(com.hlushkov.movieland.entity.Movie.class);
+        configuration.setProperties(properties);
+        return configuration.buildSessionFactory();
+    }
 
 }
