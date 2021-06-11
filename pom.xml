@@ -7,6 +7,7 @@
     <groupId>org.example</groupId>
     <artifactId>movieland-hiber</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,7 +38,6 @@
         <mockito.version>3.6.28</mockito.version>
         <testcontainer.version>1.15.1</testcontainer.version>
         <rider-spring-version>1.16.1</rider-spring-version>
-<!--        <javax.persistence.version>2.2</javax.persistence.version>-->
         <json-path.version>2.4.0</json-path.version>
 
     </properties>
@@ -60,6 +60,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin}</version>
+            </plugin>
+
+            <!--Maven war-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven.war.plugin.version}</version>
             </plugin>
 
             <!-- Flyway maven plugin -->
@@ -106,7 +113,6 @@
             <artifactId>spring-orm</artifactId>
             <version>${spring.orm.version}</version>
         </dependency>
-
 
         <!-- Connection Pool -->
         <dependency>
@@ -195,13 +201,13 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine &ndash;&gt;
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.7.0</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
 
 
         <!-- Mockito -->
@@ -257,7 +263,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
+<!--        <dependency>
             <groupId>com.github.database-rider</groupId>
             <artifactId>rider-junit5</artifactId>
             <version>1.19.0</version>
@@ -269,13 +275,13 @@
             </exclusions>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-runner -->
+        &lt;!&ndash; https://mvnrepository.com/artifact/org.junit.platform/junit-platform-runner &ndash;&gt;
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
             <version>1.7.2</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
 
         <!--        &lt;!&ndash; Javax persistence &ndash;&gt;
                 <dependency>

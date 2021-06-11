@@ -1,41 +1,31 @@
 package com.hlushkov.movieland.config;
 
-import com.github.database.rider.core.DBUnitRule;
-import com.github.database.rider.core.util.EntityManagerProvider;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;
-import org.junit.Rule;
+import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Slf4j
 @Configuration
 public class TestConfiguration {
-    @Bean
-    public LocalEntityManagerFactoryBean entityManagerFactory() {
-        LocalEntityManagerFactoryBean localEmfBean =
-                new LocalEntityManagerFactoryBean();
-        localEmfBean.setPersistenceUnitName("riderDB");
-        return localEmfBean;
-    }
+    @Value("${jdbc.maximum.pool.size}")
+    private int maximumPoolSize;
 
-    @Rule
-    public EntityManagerProvider emProvider = EntityManagerProvider.instance("riderDB");
-    @Rule
-    public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
+    private PostgreSQLContainer postgresContainer = new PostgreSQLContainer("postgres:13.1");
 
     @Bean
-    public DataSource dataSource(@Value("${jdbc.maximum.pool.size}") int maximumPoolSize) {
-
-        PostgreSQLContainer postgresContainer = new PostgreSQLContainer("postgres:13.1");
-
+    public DataSource dataSource() {
         log.info("Postgres container database name: {}", postgresContainer.getDatabaseName());
         log.info("Postgres container username: {}", postgresContainer.getUsername());
         log.info("Postgres container password: {}", postgresContainer.getPassword());
@@ -54,10 +44,33 @@ public class TestConfiguration {
                 .locations("classpath:db/migration/initial").baselineOnMigrate(true).load();
 
         flyway.migrate();
-
         return hikariDataSource;
     }
 
+    @Bean
+    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean() {
+
+        final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+        factoryBean.setDataSource(dataSource());
+        factoryBean.setPackagesToScan("com.hlushkov.movieland.entity");
+        factoryBean.setPersistenceProvider(new HibernatePersistenceProvider());
+        factoryBean.setPersistenceUnitName("dbRiderEntityFactoryBean");
+
+        final Properties properties = new Properties();
+        properties.setProperty("hibernate.connection.driver_class", postgresContainer.getDriverClassName());
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect");
+        properties.setProperty("hibernate.show_sql", "true");
+        properties.setProperty("hibernate.connection.username", postgresContainer.getUsername());
+        properties.setProperty("hibernate.connection.password", postgresContainer.getPassword());
+        properties.setProperty("hibernate.connection.url", postgresContainer.getJdbcUrl());
+        factoryBean.setJpaProperties(properties);
+        log.info("ENTITY MANAGER FACTORY BEAN CREATED BY TestConfiguration!");
+        return factoryBean;
+    }
+
+/*    @Bean
+    public EntityManager entityManager(EntityManagerFactory entityManagerFactory) {
+        return entityManagerFactory.createEntityManager();
+    }*/
+
 }
-
-
