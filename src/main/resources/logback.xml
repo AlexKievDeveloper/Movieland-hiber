@@ -27,6 +27,10 @@
         </encoder>
     </appender>
 
+    <logger name="fileLogger" level="DEBUG">
+        <appender-ref ref="fileAppender"/>
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="consoleAppender"/>
         <appender-ref ref="fileAppender"/>
