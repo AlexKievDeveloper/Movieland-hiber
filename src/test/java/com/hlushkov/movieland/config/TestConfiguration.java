@@ -60,6 +60,7 @@ public class TestConfiguration {
 
         org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
         configuration.addAnnotatedClass(com.hlushkov.movieland.entity.Movie.class);
+        configuration.addAnnotatedClass(com.hlushkov.movieland.entity.Genre.class);
         configuration.setProperties(properties);
 
         return configuration.buildSessionFactory();

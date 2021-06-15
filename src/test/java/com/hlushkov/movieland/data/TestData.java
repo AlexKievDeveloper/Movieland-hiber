@@ -322,4 +322,29 @@ public class TestData {
                     .build();
         }
     }
+
+    public static class GenreProvider implements DataSetProvider {
+        @Override
+        public IDataSet provide() {
+            return new DataSetBuilder()
+                    .table("genres")
+                    .columns("id", "name")
+                    .values("1", "драма")
+                    .values("2", "криминал")
+                    .values("3", "фэнтези")
+                    .values("4", "детектив")
+                    .values("5", "мелодрама")
+                    .values("6", "биография")
+                    .values("7", "комедия")
+                    .values("8", "фантастика")
+                    .values("9", "боевик")
+                    .values("10", "триллер")
+                    .values("11", "приключения")
+                    .values("12", "аниме")
+                    .values("13", "мультфильм")
+                    .values("14", "семейный")
+                    .values("15", "вестерн")
+                    .build();
+        }
+    }
 }
