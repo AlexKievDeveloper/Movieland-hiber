@@ -19,6 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer.sharedHttpSession;
 
@@ -47,10 +48,61 @@ class MovieControllerTest {
                 .andExpect(status().isOk()).andReturn().getResponse();
         //then
         assertNotNull(response.getHeader("Content-Type"));
-        assertEquals("application/json", response.getHeader("Content-Type"));
-        assertEquals("application/json", response.getContentType());
+        assertEquals("application/json;charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getContentType());
         assertNotNull(response.getContentAsString());
         assertTrue(response.getContentAsString().contains("The Shawshank Redemption"));
         assertTrue(response.getContentAsString().contains("The Green Mile"));
+    }
+
+    @Test
+    @DataSet(provider = TestData.MoviesProvider.class, cleanAfter = true)
+    @DisplayName("Returns list of three random movies in json format")
+    void findThreeRandomMovies() throws Exception {
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/movie/random"))
+                .andDo(print())
+                .andExpect(jsonPath("$[0].id").isNotEmpty())
+                .andExpect(jsonPath("$[0].nameRussian").isNotEmpty())
+                .andExpect(jsonPath("$[0].nameNative").isNotEmpty())
+                .andExpect(jsonPath("$[0].yearOfRelease").isNotEmpty())
+                .andExpect(jsonPath("$[0].description").isNotEmpty())
+                .andExpect(jsonPath("$[0].rating").isNotEmpty())
+                .andExpect(jsonPath("$[0].price").isNotEmpty())
+                .andExpect(jsonPath("$[0].picturePath").isNotEmpty())
+
+                .andExpect(jsonPath("$[1].id").isNotEmpty())
+                .andExpect(jsonPath("$[1].nameRussian").isNotEmpty())
+                .andExpect(jsonPath("$[1].nameNative").isNotEmpty())
+                .andExpect(jsonPath("$[1].yearOfRelease").isNotEmpty())
+                .andExpect(jsonPath("$[1].description").isNotEmpty())
+                .andExpect(jsonPath("$[1].rating").isNotEmpty())
+                .andExpect(jsonPath("$[1].price").isNotEmpty())
+                .andExpect(jsonPath("$[1].picturePath").isNotEmpty())
+
+                .andExpect(jsonPath("$[2].id").isNotEmpty())
+                .andExpect(jsonPath("$[2].nameRussian").isNotEmpty())
+                .andExpect(jsonPath("$[2].nameNative").isNotEmpty())
+                .andExpect(jsonPath("$[2].yearOfRelease").isNotEmpty())
+                .andExpect(jsonPath("$[2].description").isNotEmpty())
+                .andExpect(jsonPath("$[2].rating").isNotEmpty())
+                .andExpect(jsonPath("$[2].price").isNotEmpty())
+                .andExpect(jsonPath("$[2].picturePath").isNotEmpty())
+
+                .andExpect(jsonPath("$[3].id").doesNotExist())
+                .andExpect(jsonPath("$[3].nameRussian").doesNotExist())
+                .andExpect(jsonPath("$[3].nameNative").doesNotExist())
+                .andExpect(jsonPath("$[3].yearOfRelease").doesNotExist())
+                .andExpect(jsonPath("$[3].description").doesNotExist())
+                .andExpect(jsonPath("$[3].rating").doesNotExist())
+                .andExpect(jsonPath("$[3].price").doesNotExist())
+                .andExpect(jsonPath("$[3].picturePath").doesNotExist())
+
+                .andExpect(status().isOk()).andReturn().getResponse();
+        //then
+        assertNotNull(response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getContentType());
+        assertNotNull(response.getContentAsString());
     }
 }

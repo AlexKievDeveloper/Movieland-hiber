@@ -8,4 +8,5 @@ public interface MovieDao {
 
     List<Movie> findAll();
 
+    List<Movie> findRandom();
 }

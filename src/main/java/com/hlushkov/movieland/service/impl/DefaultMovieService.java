@@ -17,4 +17,9 @@ public class DefaultMovieService implements MovieService {
     public List<Movie> findAll() {
         return movieRepository.findAll();
     }
+
+    @Override
+    public List<Movie> findRandom() {
+        return movieRepository.findRandom();
+    }
 }

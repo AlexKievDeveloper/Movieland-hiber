@@ -6,13 +6,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 @Slf4j
 @Configuration
 @PropertySource("classpath:application.properties")
+@EnableTransactionManagement(proxyTargetClass = true)
 @ComponentScan(value = "com.hlushkov.movieland", excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX,
         pattern = "com.hlushkov.movieland.web"))
 public class MovielandApplicationContext {
@@ -53,6 +58,11 @@ public class MovielandApplicationContext {
         configuration.addAnnotatedClass(com.hlushkov.movieland.entity.Movie.class);
         configuration.setProperties(properties);
         return configuration.buildSessionFactory();
+    }
+
+    @Bean
+    protected DataSourceTransactionManager transactionManager(DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 
 }

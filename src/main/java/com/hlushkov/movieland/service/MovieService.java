@@ -8,4 +8,5 @@ public interface MovieService {
 
     List<Movie> findAll();
 
+    List<Movie> findRandom();
 }
