@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.setup.SharedHttpSessionConfig
 @DBUnit(caseInsensitiveStrategy = Orthography.LOWERCASE)
 @TestWebContextConfiguration
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class GenreControllerTest {
+class GenreControllerITest {
     private MockMvc mockMvc;
     @Autowired
     private WebApplicationContext context;

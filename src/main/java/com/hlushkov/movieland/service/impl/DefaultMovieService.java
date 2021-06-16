@@ -3,15 +3,15 @@ package com.hlushkov.movieland.service.impl;
 import com.hlushkov.movieland.dao.jpa.MovieRepository;
 import com.hlushkov.movieland.entity.Movie;
 import com.hlushkov.movieland.service.MovieService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DefaultMovieService implements MovieService {
-    @Autowired
-    private MovieRepository movieRepository;
+    private final MovieRepository movieRepository;
 
     @Override
     public List<Movie> findAll() {
@@ -21,5 +21,10 @@ public class DefaultMovieService implements MovieService {
     @Override
     public List<Movie> findRandom() {
         return movieRepository.findRandom();
+    }
+
+    @Override
+    public List<Movie> findByGenre(int genreId) {
+        return movieRepository.findByGenre(genreId);
     }
 }

@@ -32,6 +32,16 @@ CREATE TABLE IF NOT EXISTS users
     role     VARCHAR(50)  NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS movies_genres
+(
+    movie_id bigint not null
+        constraint movie_genre_movies__fk
+            references movies,
+    genre_id bigint not null
+        constraint movie_genre_genres__fk
+            references genres
+);
+
 INSERT INTO genres (name) VALUES ('драма');
 INSERT INTO genres (name) VALUES ('криминал');
 INSERT INTO genres (name) VALUES ('фэнтези');
@@ -55,6 +65,7 @@ INSERT INTO countries (name) VALUES ('Италия');
 INSERT INTO countries (name) VALUES ('Германия');
 INSERT INTO countries (name) VALUES ('Япония');
 INSERT INTO countries (name) VALUES ('Испания');
+
 
 
 

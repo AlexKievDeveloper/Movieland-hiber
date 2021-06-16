@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DBUnit(caseInsensitiveStrategy = Orthography.LOWERCASE)
 @TestWebContextConfiguration
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MovieRepositoryTest {
+class MovieRepositoryITest {
     @Autowired
     private MovieRepository movieRepository;
 
@@ -47,5 +47,17 @@ class MovieRepositoryTest {
         //then
         assertNotNull(actualMovies);
         assertEquals(3, actualMovies.size());
+    }
+
+    @Test
+    @DataSet(provider = TestData.MoviesByGenresProvider.class, cleanAfter = true)
+    @DisplayName("Returns list with movies by genre")
+    void findByGenre() {
+        //when
+        List<Movie> actualMovies = movieRepository.findByGenre(1);
+
+        //then
+        assertNotNull(actualMovies);
+        assertEquals(4, actualMovies.size());
     }
 }

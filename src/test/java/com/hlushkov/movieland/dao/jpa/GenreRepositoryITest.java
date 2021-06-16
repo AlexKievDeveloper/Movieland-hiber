@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DBUnit(caseInsensitiveStrategy = Orthography.LOWERCASE)
 @TestWebContextConfiguration
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class GenreRepositoryTest {
+class GenreRepositoryITest {
     @Autowired
     private GenreRepository genreRepository;
 
