@@ -1,5 +1,7 @@
 package com.hlushkov.movieland.dao.jpa;
 
+import com.hlushkov.movieland.common.SortDirection;
+import com.hlushkov.movieland.common.request.FindMoviesRequest;
 import com.hlushkov.movieland.dao.MovieDao;
 import com.hlushkov.movieland.entity.Movie;
 import lombok.AccessLevel;
@@ -25,10 +27,11 @@ public class MovieRepository implements MovieDao {
     private EntityManager entityManager;
 
     @Override
-    public List<Movie> findAll() {
+    public List<Movie> findAll(FindMoviesRequest findMoviesRequest) {
         String query = "SELECT m FROM Movie m";
+        String generatedQuery = generateQuery(query, findMoviesRequest);
         log.debug("Find all movies request processing starting");
-        return entityManager.createQuery(query, Movie.class)
+        return entityManager.createQuery(generatedQuery, Movie.class)
                 .setHint("org.hibernate.cacheable", Boolean.TRUE)
                 .getResultList();
     }
@@ -40,10 +43,28 @@ public class MovieRepository implements MovieDao {
     }
 
     @Override
-    public List<Movie> findByGenre(int genreId) {
+    public List<Movie> findByGenre(int genreId, FindMoviesRequest findMoviesRequest) {
         String query = "SELECT m FROM Genre g JOIN g.movies m WHERE g.id = :genreId";
-        TypedQuery<Movie> typedQuery = entityManager.createQuery(query, Movie.class);
+        String generatedQuery = generateQuery(query, findMoviesRequest);
+        TypedQuery<Movie> typedQuery = entityManager.createQuery(generatedQuery, Movie.class);
         typedQuery.setParameter("genreId", genreId);
         return typedQuery.getResultList();
+    }
+
+    String generateQuery(String query, FindMoviesRequest findMoviesRequest) {
+        String orderBy = " ORDER BY ";
+        if (findMoviesRequest.getRatingDirection().isPresent()) {
+            if (findMoviesRequest.getRatingDirection().get() == SortDirection.DESC) {
+                return query + orderBy + "rating " + SortDirection.DESC.getDirection();
+            }
+        } else if (findMoviesRequest.getPriceDirection().isPresent()) {
+            if (findMoviesRequest.getPriceDirection().get() == SortDirection.DESC) {
+                return query + orderBy + "price " + SortDirection.DESC.getDirection();
+            } else {
+                return query + orderBy + "price " + SortDirection.ASC.getDirection();
+            }
+        }
+
+        return query;
     }
 }

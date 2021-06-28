@@ -6,7 +6,6 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.hlushkov.movieland.config.TestWebContextConfiguration;
 import com.hlushkov.movieland.data.TestData;
-import com.hlushkov.movieland.entity.Movie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,7 +42,6 @@ class MovieControllerITest {
     @DisplayName("Returns list of all movies in json format")
     void findAllMovies() throws Exception {
         //when
-
         MockHttpServletResponse response = mockMvc.perform(get("/movie"))
                 .andDo(print())
                 .andExpect(status().isOk()).andReturn().getResponse();
@@ -56,6 +52,64 @@ class MovieControllerITest {
         assertNotNull(response.getContentAsString());
         assertTrue(response.getContentAsString().contains("The Shawshank Redemption"));
         assertTrue(response.getContentAsString().contains("The Green Mile"));
+    }
+
+    @Test
+    @DataSet(provider = TestData.MoviesProvider.class, cleanAfter = true)
+    @DisplayName("Returns list of all movies sorted by rating DESC in json format")
+    void findAllMoviesSortedByRatingDESC() throws Exception {
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/movie").param("rating", "desc"))
+                .andDo(print())
+                .andExpect(jsonPath("$[0].rating").value("8.9"))
+                .andExpect(jsonPath("$[24].rating").value("7.6"))
+                .andExpect(status().isOk()).andReturn().getResponse();
+        //then
+        assertNotNull(response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getContentType());
+        assertNotNull(response.getContentAsString());
+        assertTrue(response.getContentAsString().contains("The Shawshank Redemption"));
+        assertTrue(response.getContentAsString().contains("Dances with Wolves"));
+    }
+
+
+    @Test
+    @DataSet(provider = TestData.MoviesProvider.class, cleanAfter = true)
+    @DisplayName("Returns list of all movies sorted by price DESC in json format")
+    void findAllMoviesSortedByPriceDESC() throws Exception {
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/movie").param("price", "desc"))
+                .andDo(print())
+                .andExpect(jsonPath("$[0].price").value("200.6"))
+                .andExpect(jsonPath("$[24].price").value("100.0"))
+                .andExpect(status().isOk()).andReturn().getResponse();
+        //then
+        assertNotNull(response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getContentType());
+        assertNotNull(response.getContentAsString());
+        assertTrue(response.getContentAsString().contains("The Shawshank Redemption"));
+        assertTrue(response.getContentAsString().contains("Dances with Wolves"));
+    }
+
+    @Test
+    @DataSet(provider = TestData.MoviesProvider.class, cleanAfter = true)
+    @DisplayName("Returns list of all movies sorted by price ASC in json format")
+    void findAllMoviesSortedByPriceASC() throws Exception {
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/movie").param("price", "asc"))
+                .andDo(print())
+                .andExpect(jsonPath("$[0].price").value("100.0"))
+                .andExpect(jsonPath("$[24].price").value("200.6"))
+                .andExpect(status().isOk()).andReturn().getResponse();
+        //then
+        assertNotNull(response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getContentType());
+        assertNotNull(response.getContentAsString());
+        assertTrue(response.getContentAsString().contains("The Shawshank Redemption"));
+        assertTrue(response.getContentAsString().contains("Dances with Wolves"));
     }
 
     @Test
@@ -168,4 +222,59 @@ class MovieControllerITest {
         assertEquals("application/json;charset=UTF-8", response.getContentType());
         assertNotNull(response.getContentAsString());
     }
+
+    @Test
+    @DataSet(provider = TestData.MoviesGenresFullProvider.class, cleanAfter = true)
+    @DisplayName("Returns list of movies by genre sorted by rating in json format")
+    void findAllMoviesByGenreSortedByRating() throws Exception {
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/movie/genre/15?rating=desc"))
+                .andDo(print())
+                .andExpect(jsonPath("$[0].rating").value("8.5"))
+                .andExpect(jsonPath("$[1].rating").value("8.5"))
+                .andExpect(jsonPath("$[2].rating").value("8.0"))
+                .andExpect(status().isOk()).andReturn().getResponse();
+        //then
+        assertNotNull(response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getContentType());
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @DataSet(provider = TestData.MoviesGenresFullProvider.class, cleanAfter = true)
+    @DisplayName("Returns list of movies by genre sorted by price DESC in json format")
+    void findAllMoviesByGenreSortedByPriceDesc() throws Exception {
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/movie/genre/15?price=desc"))
+                .andDo(print())
+                .andExpect(jsonPath("$[0].price").value("170.0"))
+                .andExpect(jsonPath("$[1].price").value("130.0"))
+                .andExpect(jsonPath("$[2].price").value("120.55"))
+                .andExpect(status().isOk()).andReturn().getResponse();
+        //then
+        assertNotNull(response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getContentType());
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @DataSet(provider = TestData.MoviesGenresFullProvider.class, cleanAfter = true)
+    @DisplayName("Returns list of movies by genre sorted by price ASC in json format")
+    void findAllMoviesByGenreSortedByPriceAsc() throws Exception {
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/movie/genre/15?price=asc"))
+                .andDo(print())
+                .andExpect(jsonPath("$[0].price").value("120.55"))
+                .andExpect(jsonPath("$[1].price").value("130.0"))
+                .andExpect(jsonPath("$[2].price").value("170.0"))
+                .andExpect(status().isOk()).andReturn().getResponse();
+        //then
+        assertNotNull(response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("application/json;charset=UTF-8", response.getContentType());
+        assertNotNull(response.getContentAsString());
+    }
 }
+

@@ -4,6 +4,8 @@ import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
+import com.hlushkov.movieland.common.SortDirection;
+import com.hlushkov.movieland.common.request.FindMoviesRequest;
 import com.hlushkov.movieland.config.TestWebContextConfiguration;
 import com.hlushkov.movieland.data.TestData;
 import com.hlushkov.movieland.entity.Movie;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,8 +44,12 @@ class MovieRepositoryITest {
     @DataSet(provider = TestData.MovieProvider.class, cleanAfter = true)
     @DisplayName("Returns list with all movies from DB")
     void findAll() {
+        //prepare
+        FindMoviesRequest findMoviesRequest = new FindMoviesRequest();
+        findMoviesRequest.setRatingDirection(Optional.of(SortDirection.DESC));
+        findMoviesRequest.setPriceDirection(Optional.ofNullable(null));
         //when
-        List<Movie> actualMovies = movieRepository.findAll();
+        List<Movie> actualMovies = movieRepository.findAll(findMoviesRequest);
         //then
         assertNotNull(actualMovies);
         assertEquals(2, actualMovies.size());
@@ -54,14 +61,70 @@ class MovieRepositoryITest {
     void findAllTestForCache() {
         //prepare
         SQLStatementCountValidator.reset();
+        FindMoviesRequest findMoviesRequest = new FindMoviesRequest();
+        findMoviesRequest.setRatingDirection(Optional.of(SortDirection.DESC));
+        findMoviesRequest.setPriceDirection(Optional.ofNullable(null));
         //when
-        movieRepository.findAll();
-        movieRepository.findAll();
-        List<Movie> actualMovies = movieRepository.findAll();
+        movieRepository.findAll(findMoviesRequest);
+        movieRepository.findAll(findMoviesRequest);
+        List<Movie> actualMovies = movieRepository.findAll(findMoviesRequest);
         //then
         assertNotNull(actualMovies);
         assertEquals(2, actualMovies.size());
         assertSelectCount(1);
+    }
+
+    @Test
+    @DataSet(provider = TestData.MovieProvider.class, cleanAfter = true)
+    @DisplayName("Returns list with all movies from DB sorting by rating DESC")
+    void findMoviesWithRatingDirectionTest() {
+        //prepare
+        FindMoviesRequest findMoviesRequest = new FindMoviesRequest();
+        findMoviesRequest.setRatingDirection(Optional.of(SortDirection.DESC));
+        findMoviesRequest.setPriceDirection(Optional.ofNullable(null));
+        //when
+        List<Movie> actualMovies = movieRepository.findAll(findMoviesRequest);
+        //then
+        assertNotNull(actualMovies);
+        assertEquals(2, actualMovies.size());
+        assertEquals(8.9, actualMovies.get(0).getRating());
+        assertEquals(8.8, actualMovies.get(1).getRating());
+    }
+
+    @Test
+    @DataSet(provider = TestData.MovieProvider.class, cleanAfter = true)
+    @DisplayName("Returns list with all movies from DB sorted by price DESC")
+    void findMoviesWithPriceDESCDirectionTest() {
+        //prepare
+        FindMoviesRequest findMoviesRequest = new FindMoviesRequest();
+        findMoviesRequest.setPriceDirection(Optional.of(SortDirection.DESC));
+        findMoviesRequest.setRatingDirection(Optional.ofNullable(null));
+        //when
+        List<Movie> actualMovies = movieRepository.findAll(findMoviesRequest);
+
+        //then
+        assertNotNull(actualMovies);
+        assertEquals(2, actualMovies.size());
+        assertEquals(134.67, actualMovies.get(0).getPrice());
+        assertEquals(123.45, actualMovies.get(1).getPrice());
+    }
+
+    @Test
+    @DataSet(provider = TestData.MovieProvider.class, cleanAfter = true)
+    @DisplayName("Returns list with all movies from DB sorted by price ASC")
+    void findMoviesWithPriceASCDirectionTest() {
+        //prepare
+        FindMoviesRequest findMoviesRequest = new FindMoviesRequest();
+        findMoviesRequest.setPriceDirection(Optional.ofNullable(SortDirection.ASC));
+        findMoviesRequest.setRatingDirection(Optional.ofNullable(null));
+        //when
+        List<Movie> actualMovies = movieRepository.findAll(findMoviesRequest);
+
+        //then
+        assertNotNull(actualMovies);
+        assertEquals(2, actualMovies.size());
+        assertEquals(123.45, actualMovies.get(0).getPrice());
+        assertEquals(134.67, actualMovies.get(1).getPrice());
     }
 
     @Test
@@ -92,12 +155,66 @@ class MovieRepositoryITest {
     @DataSet(provider = TestData.MoviesByGenresProvider.class, cleanAfter = true)
     @DisplayName("Returns list with movies by genre")
     void findByGenre() {
+        //prepare
+        FindMoviesRequest findMoviesRequest = new FindMoviesRequest();
+        findMoviesRequest.setPriceDirection(Optional.ofNullable(SortDirection.ASC));
+        findMoviesRequest.setRatingDirection(Optional.ofNullable(null));
         //when
-        movieRepository.findByGenre(1);
-        List<Movie> actualMovies = movieRepository.findByGenre(1);
+        List<Movie> actualMovies = movieRepository.findByGenre(1, findMoviesRequest);
 
         //then
         assertNotNull(actualMovies);
         assertEquals(4, actualMovies.size());
+    }
+
+    @Test
+    @DataSet(provider = TestData.MoviesByGenresProvider.class, cleanAfter = true)
+    @DisplayName("Returns list with movies by genre sorted by rating from DB")
+    void findMoviesByGenreSortedByRating() {
+        //prepare
+        FindMoviesRequest findMoviesRequest = new FindMoviesRequest();
+        findMoviesRequest.setRatingDirection(Optional.of(SortDirection.DESC));
+        findMoviesRequest.setPriceDirection(Optional.ofNullable(null));
+        //when
+        List<Movie> actualMovieList = movieRepository.findByGenre(2, findMoviesRequest);
+        //then
+        assertNotNull(actualMovieList);
+        assertEquals(2, actualMovieList.size());
+        assertEquals(8.9, actualMovieList.get(0).getRating());
+        assertEquals(8.8, actualMovieList.get(1).getRating());
+    }
+
+    @Test
+    @DataSet(provider = TestData.MoviesByGenresProvider.class, cleanAfter = true)
+    @DisplayName("Returns list with movies by genre sorted by price DESC from DB")
+    void findMoviesByGenreSortedByPriceDesc() {
+        //prepare
+        FindMoviesRequest findMoviesRequest = new FindMoviesRequest();
+        findMoviesRequest.setPriceDirection(Optional.of(SortDirection.DESC));
+        findMoviesRequest.setRatingDirection(Optional.ofNullable(null));
+        //when
+        List<Movie> actualMovieList = movieRepository.findByGenre(2, findMoviesRequest);
+        //then
+        assertNotNull(actualMovieList);
+        assertEquals(2, actualMovieList.size());
+        assertEquals(134.67, actualMovieList.get(0).getPrice());
+        assertEquals(123.45, actualMovieList.get(1).getPrice());
+    }
+
+    @Test
+    @DataSet(provider = TestData.MoviesByGenresProvider.class, cleanAfter = true)
+    @DisplayName("Returns list with movies by genre sorted by price ASC from DB")
+    void findMoviesByGenreSortedByPriceAsc() {
+        //prepare
+        FindMoviesRequest findMoviesRequest = new FindMoviesRequest();
+        findMoviesRequest.setPriceDirection(Optional.of(SortDirection.ASC));
+        findMoviesRequest.setRatingDirection(Optional.ofNullable(null));
+        //when
+        List<Movie> actualMovieList = movieRepository.findByGenre(2, findMoviesRequest);
+        //then
+        assertNotNull(actualMovieList);
+        assertEquals(2, actualMovieList.size());
+        assertEquals(123.45, actualMovieList.get(0).getPrice());
+        assertEquals(134.67, actualMovieList.get(1).getPrice());
     }
 }

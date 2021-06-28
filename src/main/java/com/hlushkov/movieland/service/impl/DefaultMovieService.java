@@ -1,5 +1,6 @@
 package com.hlushkov.movieland.service.impl;
 
+import com.hlushkov.movieland.common.request.FindMoviesRequest;
 import com.hlushkov.movieland.dao.jpa.MovieRepository;
 import com.hlushkov.movieland.entity.Movie;
 import com.hlushkov.movieland.service.MovieService;
@@ -14,8 +15,8 @@ public class DefaultMovieService implements MovieService {
     private final MovieRepository movieRepository;
 
     @Override
-    public List<Movie> findAll() {
-        return movieRepository.findAll();
+    public List<Movie> findAll(FindMoviesRequest findMoviesRequest) {
+        return movieRepository.findAll(findMoviesRequest);
     }
 
     @Override
@@ -24,7 +25,7 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
-    public List<Movie> findByGenre(int genreId) {
-        return movieRepository.findByGenre(genreId);
+    public List<Movie> findByGenre(int genreId, FindMoviesRequest findMoviesRequest) {
+        return movieRepository.findByGenre(genreId, findMoviesRequest);
     }
 }
