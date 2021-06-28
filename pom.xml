@@ -100,6 +100,20 @@
             <version>${hibernate-core.version}</version>
         </dependency>
 
+        <!-- Jcache -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jcache</artifactId>
+            <version>5.5.2.Final</version>
+        </dependency>
+
+        <!-- Ehcache -->
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.9.4</version>
+        </dependency>
+
         <!-- Connection Pool -->
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -163,6 +177,8 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test -->
 
         <!-- Mockito -->
         <dependency>
@@ -247,6 +263,13 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- For test hibernate cache -->
+        <dependency>
+            <groupId>com.vladmihalcea</groupId>
+            <artifactId>db-util</artifactId>
+            <version>1.0.5</version>
         </dependency>
 
     </dependencies>

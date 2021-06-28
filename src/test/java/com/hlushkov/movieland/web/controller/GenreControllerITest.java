@@ -41,7 +41,7 @@ class GenreControllerITest {
     }
 
     @Test
-    @DataSet(provider = TestData.GenreProvider.class, cleanAfter = true)
+    @DataSet(provider = TestData.GenreProvider.class, cleanAfter = true, transactional = true)
     @DisplayName("Returns all genres")
     void findAll() throws Exception {
         //when

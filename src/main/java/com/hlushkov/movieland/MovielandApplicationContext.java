@@ -3,9 +3,11 @@ package com.hlushkov.movieland;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -15,6 +17,7 @@ import java.util.Properties;
 @PropertySource("classpath:application.properties")
 @ComponentScan(value = "com.hlushkov.movieland", excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX,
         pattern = "com.hlushkov.movieland.web"))
+@EnableTransactionManagement(proxyTargetClass = true)
 public class MovielandApplicationContext {
     @Value("${hibernate.connection.url}")
     private String url;
@@ -29,7 +32,7 @@ public class MovielandApplicationContext {
 
     @Bean
     public DataSource dataSource() {
-        final HikariConfig hikariConfig = new HikariConfig();
+        HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(url);
         hikariConfig.setUsername(userName);
         hikariConfig.setPassword(password);
@@ -39,21 +42,35 @@ public class MovielandApplicationContext {
     }
 
     @Bean
-    public SessionFactory sessionFactory() {
-        final Properties properties = new Properties();
-        properties.setProperty("hibernate.connection.driver_class", driverClassName);
+    public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource);
+        sessionFactory.setPackagesToScan("com.hlushkov.movieland");
+        sessionFactory.setHibernateProperties(configureHibernateProperties());
+        return sessionFactory;
+    }
+
+    private Properties configureHibernateProperties() {
+        Properties properties = new Properties();
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect");
         properties.setProperty("hibernate.show_sql", "true");
-        properties.setProperty("hibernate.connection.username", userName);
-        properties.setProperty("hibernate.connection.password", password);
-        properties.setProperty("hibernate.connection.url", url);
-        properties.setProperty("hibernate.connection.pool_size", String.valueOf(maximumPoolSize));
+        properties.setProperty("hibernate.format_sql", "true");
+        properties.setProperty("hibernate.generate_statistics", "true");
+        properties.setProperty("hibernate.cache.use_structured_entries", "true");
 
-        org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
-        configuration.addAnnotatedClass(com.hlushkov.movieland.entity.Movie.class);
-        configuration.addAnnotatedClass(com.hlushkov.movieland.entity.Genre.class);
-        configuration.setProperties(properties);
-        return configuration.buildSessionFactory();
+        properties.setProperty("hibernate.cache.use_second_level_cache", "true");
+        properties.setProperty("hibernate.cache.use_query_cache", "true");
+        properties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.jcache.JCacheRegionFactory");
+
+        properties.setProperty("javax.persistence.sharedCache.mode", "ENABLE_SELECTIVE");
+        properties.setProperty("hibernate.javax.cache.provider", "org.ehcache.jsr107.EhcacheCachingProvider");
+        properties.setProperty("hibernate.javax.cache.uri", "jcache.xml");
+        return properties;
+    }
+
+    @Bean
+    public DataSourceTransactionManager transactionManager(DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 
 }

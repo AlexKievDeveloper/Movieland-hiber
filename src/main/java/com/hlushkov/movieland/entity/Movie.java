@@ -2,6 +2,8 @@ package com.hlushkov.movieland.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -9,6 +11,8 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "movies")
+@Cacheable
+@Cache(usage= CacheConcurrencyStrategy.READ_ONLY, region = "movies")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
