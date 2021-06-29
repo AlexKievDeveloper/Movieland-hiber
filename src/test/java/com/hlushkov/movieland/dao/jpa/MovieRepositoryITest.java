@@ -101,7 +101,6 @@ class MovieRepositoryITest {
         findMoviesRequest.setRatingDirection(Optional.ofNullable(null));
         //when
         List<Movie> actualMovies = movieRepository.findAll(findMoviesRequest);
-
         //then
         assertNotNull(actualMovies);
         assertEquals(2, actualMovies.size());
@@ -119,7 +118,6 @@ class MovieRepositoryITest {
         findMoviesRequest.setRatingDirection(Optional.ofNullable(null));
         //when
         List<Movie> actualMovies = movieRepository.findAll(findMoviesRequest);
-
         //then
         assertNotNull(actualMovies);
         assertEquals(2, actualMovies.size());
@@ -133,19 +131,6 @@ class MovieRepositoryITest {
     void findRandom() {
         //when
         List<Movie> actualMovies = movieRepository.findRandom();
-
-        //then
-        assertNotNull(actualMovies);
-        assertEquals(3, actualMovies.size());
-    }
-
-    @Test
-    @DataSet(provider = TestData.MoviesProvider.class, cleanAfter = true)
-    @DisplayName("Returns list with 3 random movies from DB")
-    void findRandomTestForCache() {
-        //when
-        List<Movie> actualMovies = movieRepository.findRandom();
-
         //then
         assertNotNull(actualMovies);
         assertEquals(3, actualMovies.size());
@@ -161,7 +146,6 @@ class MovieRepositoryITest {
         findMoviesRequest.setRatingDirection(Optional.ofNullable(null));
         //when
         List<Movie> actualMovies = movieRepository.findByGenre(1, findMoviesRequest);
-
         //then
         assertNotNull(actualMovies);
         assertEquals(4, actualMovies.size());
