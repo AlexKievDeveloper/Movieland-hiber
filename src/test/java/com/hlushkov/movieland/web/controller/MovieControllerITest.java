@@ -5,13 +5,12 @@ import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.hlushkov.movieland.config.TestWebContextConfiguration;
+import com.hlushkov.movieland.dao.jpa.MovieRepository;
 import com.hlushkov.movieland.data.TestData;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -31,14 +30,30 @@ class MovieControllerITest {
     private MockMvc mockMvc;
     @Autowired
     private WebApplicationContext context;
+    @Autowired
+    private MovieRepository movieRepository;
+    @Autowired
+    private LocalSessionFactoryBean localSessionFactoryBean;
 
     @BeforeEach
     void setMockMvc() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(sharedHttpSession()).build();
     }
 
+    @BeforeAll
+    void beforeAll() {
+        movieRepository.getEntityManager().clear();
+        localSessionFactoryBean.getObject().getCache().evictAllRegions();
+    }
+
+    @AfterAll
+    void afterAll() {
+        movieRepository.getEntityManager().clear();
+        localSessionFactoryBean.getObject().getCache().evictAllRegions();
+    }
+
     @Test
-    @DataSet(provider = TestData.MovieProvider.class, cleanAfter = true)
+    @DataSet(provider = TestData.MovieProvider.class, cleanAfter = true, transactional = true)
     @DisplayName("Returns list of all movies in json format")
     void findAllMovies() throws Exception {
         //when

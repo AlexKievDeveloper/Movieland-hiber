@@ -24,6 +24,8 @@
         <spring.version>5.3.0</spring.version>
         <spring.orm.version>5.3.7</spring.orm.version>
         <postgres.version>42.2.17</postgres.version>
+        <jcache.version>5.5.2.Final</jcache.version>
+        <ehcache.version>3.9.4</ehcache.version>
         <hikari.version>4.0.0</hikari.version>
         <jackson-databind.version>2.11.3</jackson-databind.version>
         <javax.servlet.version>4.0.1</javax.servlet.version>
@@ -39,6 +41,7 @@
         <testcontainer.version>1.15.1</testcontainer.version>
         <rider-spring-version>1.16.1</rider-spring-version>
         <json-path.version>2.4.0</json-path.version>
+        <db-util.version>1.0.5</db-util.version>
 
     </properties>
 
@@ -104,14 +107,14 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jcache</artifactId>
-            <version>5.5.2.Final</version>
+            <version>${jcache.version}</version>
         </dependency>
 
         <!-- Ehcache -->
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>3.9.4</version>
+            <version>${ehcache.version}</version>
         </dependency>
 
         <!-- Connection Pool -->
@@ -269,7 +272,8 @@
         <dependency>
             <groupId>com.vladmihalcea</groupId>
             <artifactId>db-util</artifactId>
-            <version>1.0.5</version>
+            <version>${db-util.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

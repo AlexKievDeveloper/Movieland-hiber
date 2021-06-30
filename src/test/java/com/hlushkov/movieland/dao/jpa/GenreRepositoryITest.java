@@ -8,10 +8,7 @@ import com.hlushkov.movieland.config.TestWebContextConfiguration;
 import com.hlushkov.movieland.data.TestData;
 import com.hlushkov.movieland.entity.Genre;
 import com.vladmihalcea.sql.SQLStatementCountValidator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
@@ -37,15 +34,24 @@ class GenreRepositoryITest {
         localSessionFactoryBean.getObject().getCache().evictAllRegions();
     }
 
+    @AfterAll
+    void afterAll() {
+        genreRepository.getEntityManager().clear();
+        localSessionFactoryBean.getObject().getCache().evictAllRegions();
+    }
+
     @Test
     @DataSet(provider = TestData.GenreProvider.class, cleanAfter = true, transactional = true)
     @DisplayName("Returns list with all genres and cache it")
     void findAll() {
+        //prepare
+        SQLStatementCountValidator.reset();
         //when
         List<Genre> actualGenreList = genreRepository.findAll();
         //then
         assertNotNull(actualGenreList);
         assertEquals(15, actualGenreList.size());
+        assertSelectCount(1);
     }
 
     @Test
@@ -63,5 +69,4 @@ class GenreRepositoryITest {
         assertEquals(15, actualGenreList.size());
         assertSelectCount(1);
     }
-
 }

@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Slf4j
+@EnableScheduling
 @Configuration
 @PropertySource("classpath:application.properties")
 @ComponentScan(value = "com.hlushkov.movieland", excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX,
@@ -61,6 +63,7 @@ public class MovielandApplicationContext {
         properties.setProperty("hibernate.cache.use_second_level_cache", "true");
         properties.setProperty("hibernate.cache.use_query_cache", "true");
         properties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.jcache.JCacheRegionFactory");
+        properties.setProperty("hibernate.javax.cache.missing_cache_strategy", "create");
 
         properties.setProperty("javax.persistence.sharedCache.mode", "ENABLE_SELECTIVE");
         properties.setProperty("hibernate.javax.cache.provider", "org.ehcache.jsr107.EhcacheCachingProvider");

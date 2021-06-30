@@ -94,11 +94,11 @@ public class TestConfiguration {
         properties.setProperty("hibernate.cache.use_second_level_cache", "true");
         properties.setProperty("hibernate.cache.use_query_cache", "true");
         properties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.jcache.JCacheRegionFactory");
+        properties.setProperty("hibernate.javax.cache.missing_cache_strategy", "create");
 
         properties.setProperty("javax.persistence.sharedCache.mode", "ENABLE_SELECTIVE");
         properties.setProperty("hibernate.javax.cache.provider", "org.ehcache.jsr107.EhcacheCachingProvider");
         properties.setProperty("hibernate.javax.cache.uri", "jcache.xml");
         return properties;
     }
-
 }
