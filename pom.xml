@@ -23,6 +23,7 @@
         <!-- Dependencies -->
         <spring.version>5.3.0</spring.version>
         <spring.orm.version>5.3.7</spring.orm.version>
+        <spring.security.version>5.5.1</spring.security.version>
         <postgres.version>42.2.17</postgres.version>
         <jcache.version>5.5.2.Final</jcache.version>
         <ehcache.version>3.9.4</ehcache.version>
@@ -34,6 +35,7 @@
         <lombok.version>1.18.16</lombok.version>
         <commons-codec.version>1.11</commons-codec.version>
         <hibernate-core.version>5.5.0.Final</hibernate-core.version>
+        <jsonwebtoken.version>0.10.7</jsonwebtoken.version>
 
         <!-- Tests dependencies -->
         <junit.version>5.7.0</junit.version>
@@ -144,6 +146,27 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <!-- Spring-security-core -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
+        <!-- Spring-security-web -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
+        <!-- Spring-security-config -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
         <!-- JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -179,6 +202,36 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Google.guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>28.1-jre</version>
+        </dependency>
+
+        <!-- Jsonwebtoken-api -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+
+        <!-- Jsonwebtoken-impl -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jsonwebtoken.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Jsonwebtoken-jackson -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jsonwebtoken.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Test -->

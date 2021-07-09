@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import javax.sql.DataSource;
@@ -79,8 +79,8 @@ public class TestConfiguration {
     }
 
     @Bean
-    protected DataSourceTransactionManager transactionManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
+    public JpaTransactionManager transactionManager(LocalSessionFactoryBean localSessionFactoryBean) {
+        return new JpaTransactionManager(localSessionFactoryBean.getObject());
     }
 
     private Properties configureHibernateProperties() {

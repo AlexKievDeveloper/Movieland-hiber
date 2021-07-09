@@ -91,9 +91,10 @@ public class MovieRepository implements MovieDao {
         return criteriaQuery;
     }
 
+    @Transactional
     @PostConstruct
     @Scheduled(initialDelayString = "${movie.cache.update.time.interval}", fixedRateString = "${movie.cache.update.time.interval}")
-    void updateCacheValues() {
+    public void updateCacheValues() {
         entityManager.clear();
         SessionFactory sessionFactory = localSessionFactoryBean.getObject();
         if (sessionFactory != null) {

@@ -1,7 +1,10 @@
 package com.hlushkov.movieland.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,13 +15,13 @@ import java.util.Set;
 @Entity
 @Table(name = "movies")
 @Cacheable
-@Cache(usage= CacheConcurrencyStrategy.READ_ONLY, region = "movies")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY, region = "movies")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Movie implements Cloneable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name = "name_russian")
     private String nameRussian;

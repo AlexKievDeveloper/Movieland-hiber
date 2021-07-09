@@ -747,4 +747,48 @@ public class TestData {
                     .build();
         }
     }
+
+    public static class SingUpUserProvider implements DataSetProvider {
+        @Override
+        public IDataSet provide() {
+            return new DataSetBuilder()
+                    .table("users")
+                    .columns("id", "username", "password", "email", "role", "is_enabled")
+                    .build();
+        }
+    }
+
+    public static class SingUpUserProviderResult implements DataSetProvider {
+        @Override
+        public IDataSet provide() {
+            return new DataSetBuilder()
+                    .table("users")
+                    .columns("id", "username", "password", "email", "role", "is_enabled")
+                    .values("2", "test", "test", "test@gmail.com", "USER", true)
+                    .build();
+        }
+    }
+
+    public static class SingUpUserProviderResultForService implements DataSetProvider {
+        @Override
+        public IDataSet provide() {
+            return new DataSetBuilder()
+                    .table("users")
+                    .columns("id", "username", "email", "role", "is_enabled")
+                    .values("2", "test", "test@gmail.com", "USER", true)
+                    .build();
+        }
+    }
+
+    public static class SingUpUserProviderResultForAuthFilter implements DataSetProvider {
+        @Override
+        public IDataSet provide() {
+            return new DataSetBuilder()
+                    .table("users")
+                    .columns("id", "username", "password", "email", "role", "is_enabled")
+                    .values("2", "test", "$2a$10$Pb.5KUeNlGjIXuxUWftKQu43VwZ8/DK1UN.LJzTTgZAD2.KvP7uqG", "test@gmail.com", "USER", true)
+                    .build();
+        }
+    }
+
 }

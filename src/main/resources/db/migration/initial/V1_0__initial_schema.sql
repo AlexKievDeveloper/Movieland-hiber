@@ -24,12 +24,12 @@ CREATE TABLE IF NOT EXISTS movies
 
 CREATE TABLE IF NOT EXISTS users
 (
-    id  SERIAL PRIMARY KEY,
-    nickname VARCHAR(200) UNIQUE NOT NULL,
-    email    VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(200) NOT NULL,
-    salt     VARCHAR(500) UNIQUE NOT NULL,
-    role     VARCHAR(50)  NOT NULL
+    id         SERIAL PRIMARY KEY,
+    username   VARCHAR(200) UNIQUE NOT NULL,
+    password   VARCHAR(200) UNIQUE NOT NULL,
+    email      VARCHAR(50) UNIQUE  NOT NULL,
+    role       VARCHAR(20)         NOT NULL,
+    is_enabled boolean             NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS movies_genres
@@ -65,6 +65,8 @@ INSERT INTO countries (name) VALUES ('Италия');
 INSERT INTO countries (name) VALUES ('Германия');
 INSERT INTO countries (name) VALUES ('Япония');
 INSERT INTO countries (name) VALUES ('Испания');
+
+
 
 
 

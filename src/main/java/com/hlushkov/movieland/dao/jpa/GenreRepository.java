@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
@@ -43,9 +44,10 @@ public class GenreRepository implements GenreDao {
                 .getResultList();
     }
 
+    @Transactional
     @PostConstruct
     @Scheduled(initialDelayString = "${genre.cache.update.time.interval}", fixedRateString = "${genre.cache.update.time.interval}")
-    void updateCacheValues() {
+    public void updateCacheValues() {
         entityManager.clear();
         SessionFactory sessionFactory = localSessionFactoryBean.getObject();
         if (sessionFactory != null) {
