@@ -55,7 +55,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             if (blockedTokensStoringService.isTokenInBlockList(token)) {
                 log.error("Received request with blocked token: {}, request: {}", token, request);
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                filterChain.doFilter(request, response);
                 return;
             }
 

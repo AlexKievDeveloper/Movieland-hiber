@@ -73,6 +73,14 @@ class AuthenticationControllerITest {
         localSessionFactoryBean.getObject().getCache().evictAllRegions();
     }
 
+    @Test
+    @DisplayName("Return status 200")
+    void home() throws Exception {
+        //when+then
+        mockMvc.perform(get("/"))
+                .andDo(print())
+                .andExpect(status().isOk()).andReturn().getResponse();
+    }
 
     @Test
     @DisplayName("Add user to db")
@@ -114,7 +122,7 @@ class AuthenticationControllerITest {
         assertTrue(jwtAccessToken.contains("Bearer eyJhbGciOiJIUzUxMiJ9"));
 
         //when+then
-        mockMvc.perform(get("/logout")
+        mockMvc.perform(get("/api/v1/logout")
                 .header("Authorization", jwtAccessToken))
                 .andDo(print())
                 .andExpect(status().isOk()).andReturn();

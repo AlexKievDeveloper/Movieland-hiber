@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 @Data
 @NoArgsConstructor
@@ -19,8 +16,6 @@ public class JwtConfig {
     private String tokenPrefix;
     @Value("${application.jwt.tokenExpirationAfterSec}")
     private Integer tokenExpirationAfterSec;
-    @Value("${application.jwt.refreshTokenExpirationSec}")
-    private Integer refreshTokenExpirationAfterSec;
 
     public String getAuthorizationHeader() {
         return HttpHeaders.AUTHORIZATION;

@@ -36,6 +36,7 @@
         <commons-codec.version>1.11</commons-codec.version>
         <hibernate-core.version>5.5.0.Final</hibernate-core.version>
         <jsonwebtoken.version>0.10.7</jsonwebtoken.version>
+        <expiringmap.version>0.5.9</expiringmap.version>
 
         <!-- Tests dependencies -->
         <junit.version>5.7.0</junit.version>
@@ -232,6 +233,13 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jsonwebtoken.version}</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!--Expiring Map-->
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>expiringmap</artifactId>
+            <version>${expiringmap.version}</version>
         </dependency>
 
         <!-- Test -->

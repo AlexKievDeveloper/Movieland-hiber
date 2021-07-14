@@ -4,6 +4,7 @@ import com.hlushkov.movieland.security.jwt.JwtConfig;
 import com.hlushkov.movieland.security.jwt.JwtTokenVerifier;
 import com.hlushkov.movieland.security.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import com.hlushkov.movieland.security.util.BlockedTokensStoringService;
+import com.hlushkov.movieland.security.util.LogoutService;
 import com.hlushkov.movieland.service.impl.DefaultUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.crypto.SecretKey;
 
@@ -33,16 +36,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        RequestMatcher loginRequestMatcher = new AntPathRequestMatcher("/api/v1/login", "POST");
+        RequestMatcher logoutRequestMatcher = new AntPathRequestMatcher("/api/v1/logout", "GET");
+
+        JwtUsernameAndPasswordAuthenticationFilter jwtUsernameAndPasswordAuthenticationFilter
+                = new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey);
+        jwtUsernameAndPasswordAuthenticationFilter.setRequiresAuthenticationRequestMatcher(loginRequestMatcher);
+
         http
-                .csrf().disable()//FIXME REMOVE IT BEFORE COMMIT
+                .csrf()
+                .ignoringRequestMatchers(loginRequestMatcher, logoutRequestMatcher)
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
+                .addFilter(jwtUsernameAndPasswordAuthenticationFilter)
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig, blockedTokensStoringService),
                         JwtUsernameAndPasswordAuthenticationFilter.class)
+                .logout()
+                .logoutUrl("/api/v1/logout")
+                .logoutSuccessUrl("/api/v1/")
+                .logoutRequestMatcher(logoutRequestMatcher)
+                .addLogoutHandler(new LogoutService(blockedTokensStoringService, jwtConfig))
+                .and()
                 .authorizeRequests()
-                .antMatchers("/", "/api/v1/signUp").permitAll()
+                .antMatchers("/api/v1/", "/api/v1/signUp").permitAll()
                 .anyRequest()
                 .authenticated();
     }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -46,11 +47,17 @@ class JwtUsernameAndPasswordAuthenticationFilterITest {
 
     @BeforeEach
     void beforeEach() throws Exception {
+        JwtUsernameAndPasswordAuthenticationFilter jwtUsernameAndPasswordAuthenticationFilter =
+                new JwtUsernameAndPasswordAuthenticationFilter(
+                authenticationConfiguration.getAuthenticationManager(),
+                jwtConfig,
+                secretKey);
+
+        jwtUsernameAndPasswordAuthenticationFilter.setRequiresAuthenticationRequestMatcher(
+                new AntPathRequestMatcher("/api/v1/login", "POST"));
+
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(sharedHttpSession())
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(
-                        authenticationConfiguration.getAuthenticationManager(),
-                        jwtConfig,
-                        secretKey))
+                .addFilter(jwtUsernameAndPasswordAuthenticationFilter)
                 .build();
     }
 
@@ -65,7 +72,7 @@ class JwtUsernameAndPasswordAuthenticationFilterITest {
                 Map.of("username", "test", "password", "test");
         String json = mapper.writeValueAsString(userCredentials);
         //when+then
-        MockHttpServletResponse response = mockMvc.perform(post("/login")
+        MockHttpServletResponse response = mockMvc.perform(post("/api/v1/login")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))

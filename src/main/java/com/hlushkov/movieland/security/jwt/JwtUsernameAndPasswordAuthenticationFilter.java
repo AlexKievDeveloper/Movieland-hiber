@@ -28,7 +28,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     private final SecretKey secretKey;
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException {
 
         try {
             UsernameAndPasswordAuthenticationRequest authenticationRequest = new ObjectMapper()
@@ -39,8 +40,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                     authenticationRequest.getPassword()
             );
 
-            Authentication authenticate = authenticationManager.authenticate(authentication);
-            return authenticate;
+            return authenticationManager.authenticate(authentication);
         } catch (IOException e) {
             log.info("IOException during request parsing process", e);
             throw new RuntimeException(e);
